@@ -205,7 +205,9 @@ Leaking designs without permission from MerelyMoose#9833 may result in punishmen
 
 
 
-const mySecret = process.env['TOKEN']
+
+const mySecret = process.env['bed']
 keepAlive()
 client.login(mySecret);
+
 
