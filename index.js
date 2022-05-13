@@ -1,3 +1,5 @@
+const Database = require("@replit/database")
+
 const Discord = require('discord.js-v11-stable');
 const client = new Discord.Client();
 const { Client, Attachment, RichEmbed } = require('discord.js-v11-stable');
@@ -5,6 +7,25 @@ const keepAlive = require("./server")
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
+const db = new Database()
+//contains username+roles of muted people
+var mutedUsers = [
+  
+]
+
+db.get("mutes").then(mutes => {
+  if (!mutes){
+db.set("mutes", mutedUsers)
+  }
+});
+
+function updateMutes(roleUsers){
+  
+db.get("mutes").then(mutes => {
+  mutes.push([roleUsers])
+  db.set("mutes", mutedUsers)
+});
+}
 
 let lolcounter = [
   
@@ -94,6 +115,13 @@ client.on('message', msg => {
   if (msg.content.toLowerCase() === 'lol') {
     updateCounter()
   }
+   if (msg.content.split(" ")[1] === 'RUINED') {
+    var number = msg.content.split(" ")[4]
+    const user = msg.mentions.users.first();
+    const member = msg.guild.member(user);
+    const channel = member.guild.channels.find(ch => ch.name === '『🪐』counting-shame');
+    channel.send(`@${member.nickname} WTH MAN!!!??? WHY YOU GOTTA MESS IT UP! WE WERE AT ${number}!!`)
+  }
    
   
 if (msg.content.toLowerCase() === 'm:lolcounter') {
@@ -106,16 +134,85 @@ if (msg.content.toLowerCase() === 'm:befriend') {
   //msg.author.addFriend();
   msg.channel.send(' ```command disabled by owner. Reason: \ncrashes bot```');
   }
+  if (msg.content.toLowerCase().startsWith('m:say')) {
+    var sender = msg.member.hasPermission('ADMINISTRATOR')
+    var ab = msg.content.toLowerCase().replace("m:say", "");
+     if (sender === true) {
+    msg.delete()  .then(msg.channel.send(`${ab}`));
+     }else{
+  msg.delete()
+  .then(msg.channel.send(`MESSAGE FROM ${msg.member.user.tag}// ${ab}`));
+   }
+  }
 
+
+  if (msg.content.toLowerCase().startsWith('m:warn')) {
+    var sender = msg.member.hasPermission('ADMINISTRATOR')
+    const user = msg.mentions.users.first();
+    const member = msg.guild.member(user);
+     if (sender === true) {
+    switch (member.highestRole.id) {
+      case '974077286309572639':
+      member.removeRole('974077286309572639')
+      member.removeRole('935258587486380083')
+      member.addRole('935310953342447616')
+      msg.reply("User has been muted! Please unmute them once through the 'm:unmute [mention user]' command once they have learned their lesson!")
+      break;
+      case '974077282488569906':
+      member.addRole('974077286309572639')
+      member.removeRole("974077282488569906")
+      msg.channel.send(`${member.user.tag} has been warned! (User has 3 warn(s) in total)`)
+      break;
+      case '974077137214648351':
+      member.addRole("974077282488569906")
+      member.removeRole("974077137214648351")
+      msg.channel.send(`${member.user.tag} has been warned! (User has 2 warn(s) in total)`)
+      break;
+      default:
+      member.addRole("974077137214648351")
+      msg.channel.send(`${member.user.tag} has been warned! (User has 1 warn(s) in total)`)
+    }
+   }else{
+  msg.reply('You don\'t have the perms, loser')
+   }
+      }
+  if (msg.content.toLowerCase().startsWith('m:mute')) {
+    var sender = msg.member.hasPermission('ADMINISTRATOR')
+    const user = msg.mentions.users.first();
+    const member = msg.guild.member(user);
+   if (sender === true) {
+   member.addRole('935310953342447616')
+   member.removeRole('935258587486380083')
+  .then(msg.channel.send(`'${user.tag}'  has been muted! `))
+  .catch(console.error);
+
+   }else{
+  msg.reply('You don\'t have the perms, loser')
+   }
+  }
+if (msg.content.toLowerCase().startsWith('m:unmute')) {
+    var sender = msg.member.hasPermission('ADMINISTRATOR')
+    const user = msg.mentions.users.first();
+    const member = msg.guild.member(user);
+   if (sender === true) {
+   member.removeRole('935310953342447616')
+   member.addRole('935258587486380083')
+  .then(msg.channel.send(`'${user.tag}'  has been unmuted! `))
+  .catch(console.error);
+
+   }else{
+  msg.reply('You don\'t have the perms, loser')
+   }
+  }
   
   if (msg.content.toLowerCase() === 'moose') {
     msg.channel.send('MOOSE!!!');
   }
   if (msg.content.toLowerCase() === 'moose cmds') {
-    msg.channel.send('```Moose Bot COMMANDS: \nm:ping: bot replies with pong \nmoose: bot says moose \nm:joindate [mention a user]: replies with the day that user joined the server \nm:serverImage: Replies with the server\'s profile image \nm:pfp [mention a user]: Sends the mentioned user\'s pfp \n  \nCommands are not case-sensitive, More coming soon! \n \n \n \nSay "mod cmds" for commands made specially for mods!```');
+    msg.channel.send('```Moose Bot COMMANDS: \nm:ping: bot replies with pong \nmoose: bot says moose \nm:say [message to send in chat]: makes moose bot say whatever you want!  \nm:joindate [mention a user]: replies with the day that user joined the server \nm:serverImage: Replies with the server\'s profile image \nm:pfp [mention a user]: Sends the mentioned user\'s pfp \n  \nCommands are not case-sensitive, More coming soon! \n \n \n \nSay "mod cmds" for commands made specially for mods!```');
   }
   if (msg.content.toLowerCase() === 'mod cmds') {
-    msg.channel.send('```Mod Commands(Must have ADMINISTRATOR permission to use!): \nm:addrole [mention user] [role id]: adds the role to the mentioned user \nm:removerole [mention user] [role id]: opposite of the add~role command \nm:kick [mention user]: kicks the mentioned user from the server \nm:ban [mention user]: bans the mentioned user \n \nRole ID can be substituted for "mod", "jrmod", or "event" which will assign the mentioned user that role.```');
+    msg.channel.send('```Mod Commands(Must have ADMINISTRATOR permission to use!): \nm:addrole [mention user] [role id]: adds the role to the mentioned user \nm:removerole [mention user] [role id]: opposite of the add~role command \nm:mute [mention user]: mutes the user(currently permissions broken) \nm:unmute [mention user]: opposite of m:mute \nm:kick [mention user]: kicks the mentioned user from the server \nm:ban [mention user]: bans the mentioned user \n \nRole ID can be substituted for "mod", "verified", "jrmod", or "event" which will assign the mentioned user that role.```');
   }
     if (msg.content.toLowerCase() === 'm:ping') {
     msg.channel.send('pong');
@@ -128,9 +225,9 @@ if (msg.content.toLowerCase() === 'm:befriend') {
     msg.channel.send(`${member} joined the server: \n ${join2}`);
   }
   if (msg.content.toLowerCase().startsWith('m:pfp')) {
+    
     const user = msg.mentions.users.first();
     const pfp = user.avatarURL
- 
     msg.channel.send(`${pfp}`);
   }
   if (msg.content.toLowerCase() === 'm:serverimage') {
@@ -206,7 +303,7 @@ Leaking designs without permission from MerelyMoose#9833 may result in punishmen
 
 
 
-const mySecret = process.env['bed']
+const mySecret = process.env['botkey']
 keepAlive()
 client.login(mySecret);
 
