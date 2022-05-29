@@ -120,7 +120,7 @@ client.on('message', msg => {
     const user = msg.mentions.users.first();
     const member = msg.guild.member(user);
     const channel = member.guild.channels.find(ch => ch.name === '『🪐』counting-shame');
-    channel.send(`@${member.nickname} WTH MAN!!!??? WHY YOU GOTTA MESS IT UP! WE WERE AT ${number}!!`)
+    channel.send(`@${member.user.tag} WTH MAN!!!??? WHY YOU GOTTA MESS IT UP! WE WERE AT ${number}!!`)
   }
    
   
@@ -136,9 +136,11 @@ if (msg.content.toLowerCase() === 'm:befriend') {
   }
   if (msg.content.toLowerCase().startsWith('m:say')) {
     var sender = msg.member.hasPermission('ADMINISTRATOR')
+    var contentS = ab
     var ab = msg.content.toLowerCase().replace("m:say", "");
      if (sender === true) {
-    msg.delete()  .then(msg.channel.send(`${ab}`));
+    msg.delete()  
+      msg.channel.send(`${ab} ᠎⠀ ⠀`);
      }else{
   msg.delete()
   .then(msg.channel.send(`MESSAGE FROM ${msg.member.user.tag}// ${ab}`));
@@ -204,19 +206,24 @@ if (msg.content.toLowerCase().startsWith('m:unmute')) {
   msg.reply('You don\'t have the perms, loser')
    }
   }
-  
+  /* switched to ruby codebase
   if (msg.content.toLowerCase() === 'moose') {
     msg.channel.send('MOOSE!!!');
   }
-  if (msg.content.toLowerCase() === 'moose cmds') {
+
+    command switched to new ruby codebase 
+
+    if (msg.content.toLowerCase() === 'moose cmds') {
     msg.channel.send('```Moose Bot COMMANDS: \nm:ping: bot replies with pong \nmoose: bot says moose \nm:say [message to send in chat]: makes moose bot say whatever you want!  \nm:joindate [mention a user]: replies with the day that user joined the server \nm:serverImage: Replies with the server\'s profile image \nm:pfp [mention a user]: Sends the mentioned user\'s pfp \n  \nCommands are not case-sensitive, More coming soon! \n \n \n \nSay "mod cmds" for commands made specially for mods!```');
   }
-  if (msg.content.toLowerCase() === 'mod cmds') {
+  */
+  if (msg.content.toLowerCase() === 'm:modhelp') {
     msg.channel.send('```Mod Commands(Must have ADMINISTRATOR permission to use!): \nm:addrole [mention user] [role id]: adds the role to the mentioned user \nm:removerole [mention user] [role id]: opposite of the add~role command \nm:mute [mention user]: mutes the user(currently permissions broken) \nm:unmute [mention user]: opposite of m:mute \nm:kick [mention user]: kicks the mentioned user from the server \nm:ban [mention user]: bans the mentioned user \n \nRole ID can be substituted for "mod", "verified", "jrmod", or "event" which will assign the mentioned user that role.```');
   }
+  /* ruby codebase switched 
     if (msg.content.toLowerCase() === 'm:ping') {
     msg.channel.send('pong');
-  }
+  } */
     if (msg.content.toLowerCase().startsWith('m:joindate')) {
     const user = msg.mentions.users.first();
     const member = msg.guild.member(user);
@@ -227,11 +234,16 @@ if (msg.content.toLowerCase().startsWith('m:unmute')) {
   if (msg.content.toLowerCase().startsWith('m:pfp')) {
     
     const user = msg.mentions.users.first();
-    const pfp = user.avatarURL
-    msg.channel.send(`${pfp}`);
+    
+    if (user){
+      const pfp = user.avatarURL
+      msg.channel.send(pfp)
+    }else{
+    msg.channel.send('You forogt to tag the member who\'s pfp you seek!')
+  }
   }
   if (msg.content.toLowerCase() === 'm:serverimage') {
-msg.channel.send(`https://cdn.discordapp.com/attachments/934607737403351079/941789526307799050/Discord_Group4.png`);
+msg.channel.send(`https://cdn.discordapp.com/icons/934607737046843432/2f0235fcb994d6ea014072fb7dc02d4f.webp?size=100`);
   }
 
   if (msg.content.toLowerCase() === 'm:rules') {
